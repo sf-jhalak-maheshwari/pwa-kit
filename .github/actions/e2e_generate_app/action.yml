@@ -14,5 +14,10 @@ runs:
   using: composite
   steps:
   - name: Generate new project based on project-key
-    run: node e2e/scripts/generate-project.js --project-key ${{ inputs.PROJECT_KEY }} --templateVersion ${{ inputs.TEMPLATE_VERSION }}
+    run: |
+      COMMAND="node e2e/scripts/generate-project.js --project-key ${{ inputs.PROJECT_KEY }}"
+      if [[ -n "${{ inputs.TEMPLATE_VERSION }}" ]]; then
+        COMMAND="$COMMAND --templateVersion ${{ inputs.TEMPLATE_VERSION }}"
+      fi
+      $COMMAND
     shell: bash
