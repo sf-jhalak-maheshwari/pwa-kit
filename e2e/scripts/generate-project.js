@@ -10,10 +10,16 @@ const {program} = require('commander')
 const {mkdirIfNotExists} = require('./utils.js')
 
 const main = async (opts) => {
-    const {projectKey, projectConfig} = opts
+    const {projectKey, projectConfig, templateVersion} = opts
 
     if (!projectKey && !projectConfig) {
         console.error('You must provide either <project-key> or <project-config>.')
+        console.log(program.helpInformation())
+        process.exit(1)
+    }
+
+    if (!templateVersion) {
+        console.error('You must provide a <template-version>.')
         console.log(program.helpInformation())
         process.exit(1)
     }
@@ -39,11 +45,12 @@ const main = async (opts) => {
         // Explicitly create outputDir because generator runs into permissions issue when generating no-ext projects.
         await mkdirIfNotExists(config.GENERATED_PROJECTS_DIR)
         const outputDir = `${config.GENERATED_PROJECTS_DIR}/${projectDir}`
-        let generateAppCommand = `${config.GENERATOR_CMD} ${outputDir}`
+        let generateAppCommand = `${config.GENERATOR_CMD} ${outputDir} --templateVersion ${templateVersion}`
         // TODO: Update script to setup local verdaccio npm repo to allow running 'npx @salesforce/pwa-kit-create-app' to generate apps
         if (preset) {
             generateAppCommand = `${config.GENERATOR_CMD} ${outputDir} --preset ${preset}`
         }
+        console.log('Running command:', generateAppCommand)
         return await runGeneratorWithResponses(generateAppCommand, cliResponses)
     } catch (err) {
         // Generator failed to create project
@@ -78,6 +85,7 @@ program
             throw new Error('Invalid JSON string.')
         }
     })
+    .option('--templateVersion <templateVersion>', 'Template version used to generate the project')
     .action((options) => {
         // Call the main function with parsed options
         main(options)
