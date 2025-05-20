@@ -101,3 +101,9 @@ test('renders secondary with event handlers', async () => {
 
     expect(onRemoveItemClick).toHaveBeenCalledTimes(1)
 })
+
+test('renders the Remove button', () => {
+    renderWithProviders(<MockedComponent />)
+    const removeButton = screen.getByRole('button', { name: /remove/i })
+    expect(removeButton).toBeInTheDocument()
+})
