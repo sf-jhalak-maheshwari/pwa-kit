@@ -139,9 +139,8 @@ describe('Render and logs out', function () {
             expect(logOutIcons[0]).toHaveAttribute('aria-hidden', 'true')
             expect(logOutIcons[1]).toHaveAttribute('aria-hidden', 'true')
         })
-
-        await user.click(screen.getAllByText(/Log Out/)[0])
         useCustomerType.mockReturnValue({isRegistered: false, isGuest: true})
+        await user.click(screen.getAllByText(/Log Out/)[0])
 
         await waitFor(() => {
             expect(window.location.pathname).toBe(`${expectedBasePath}/login`)
